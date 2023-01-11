@@ -2,6 +2,7 @@ package com.estafeta.scanner.plugin;
 
 import static android.content.Context.BLUETOOTH_SERVICE;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -125,6 +126,7 @@ public class BarcodeScanner {
         }
     }
 
+    @SuppressLint("MissingPermission")
     boolean devicesConnected() {
         BluetoothManager btManager = (BluetoothManager) context.getSystemService(BLUETOOTH_SERVICE);
         Set<BluetoothDevice> pairedDevices = btManager.getAdapter().getBondedDevices();
