@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="com.estafeta.scanner.plugin" version="1.0.0">
+    <name>EstafetaScannerPlugin</name>
+    <description>Estafeta Scanner Plugin to scan barcode using Unitech SDK</description>
+    <license>MIT</license>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines> 
+ 
+    <js-module src="www/EstafetaScannerPlugin.js" name="EstafetaScannerPlugin">
+        <clobbers target="cordova.plugins.EstafetaScannerPlugin" />
+    </js-module>
+    
+    <!-- android -->
+    <platform name="android">
+
+         <config-file target="res/xml/config.xml" parent="/*">
+            <!-- Change this to your plugin name -->
+            <feature name="EstafetaScannerPlugin">
+                <!-- Change this to reflect the name of the package in your android source files -->
+                <param name="android-package" value="com.estafeta.scanner.plugin.EstafetaScannerPlugin"/>
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <!-- Permission bluetooth to get all devices near to know if some are connected or not -->
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+        </config-file>
+ 
+        <source-file src="src/android/BarcodeScanner.java" target-dir="src/com/estafeta/scanner/plugin" />
+        <source-file src="src/android/EstafetaScannerPlugin.java" target-dir="src/com/estafeta/scanner/plugin" />
+    
+    </platform>          
+</plugin>
