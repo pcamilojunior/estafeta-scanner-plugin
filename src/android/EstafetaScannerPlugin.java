@@ -54,12 +54,17 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
      * Stop receiver scan barcode events
      */
     private void stopScanner() {
-        this.barcodeScanner.closeScanService();
+        try {
+            this.barcodeScanner.closeScanService();
+            this.callbackContext.success();
+        } catch (Exception ex) {
+            this.callbackContext.error(ex.getMessage());
+        }
     }
 
     @Override
     public void onDestroy() {
-        this.barcodeScanner.closeScanService();
+        stopScanner();
         super.onDestroy();
     }
 
