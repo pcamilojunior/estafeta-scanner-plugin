@@ -27,6 +27,7 @@
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <!-- Permission bluetooth to get all devices near to know if some are connected or not -->
             <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
         </config-file>
  
         <source-file src="src/android/BarcodeScanner.java" target-dir="src/com/estafeta/scanner/plugin" />
