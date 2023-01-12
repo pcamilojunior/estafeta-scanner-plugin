@@ -19,6 +19,7 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
     private BarcodeScanner barcodeScanner;
     private String ACTION_START_SCANNER = "startScanner";
     private String ACTION_STOP_SCANNER = "stopScanner";
+    private String ACTION_SCANNER_LISTENER = "scannerListener";
     private PluginResult pluginResult;
     private int BLUETOOTH_RESULT = 3001;
 
@@ -29,23 +30,34 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
     }
 
     @Override
-    public void onResume(boolean multitasking) {
-        super.onResume(multitasking);
-
-    }
-
-    @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
 
-        if (ACTION_START_SCANNER.equals(action)) {
-            this.checkBluetoothConnectivity();
-            return true;
+        if (action != null) {
+            try {
+                if (ACTION_START_SCANNER.equals(action)) {
+                    this.checkBluetoothConnectivity();
+                }
+                if (ACTION_STOP_SCANNER.equals(action)) {
+                    this.stopScanner();
+                }
+                if (ACTION_SCANNER_LISTENER.equals(action)) {
+                    this.scannerListener();
+                }
+            } catch (Exception ex) {
+                this.callbackContext.error(ex.getMessage());
+                return false;
+            }
+        } else {
+            this.callbackContext.error("Action invalid!");
+            return false;
         }
-        if (ACTION_STOP_SCANNER.equals(action)) {
-            this.stopScanner();
-        }
-        return false;
+
+        return true;
+    }
+
+    private void scannerListener() {
+        this.barcodeScanner.registerScannerReceiver();
     }
 
     private void checkBluetoothConnectivity() {
@@ -53,10 +65,10 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 this.cordova.requestPermissions(this, BLUETOOTH_RESULT, new String[] { Manifest.permission.BLUETOOTH_CONNECT });
             } else {
-                startScanner();
+                this.barcodeScanner.startScanningBarcode();
             }
         } else {
-            startScanner();
+            this.barcodeScanner.startScanningBarcode();
         }
     }
 
@@ -65,15 +77,8 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
         if (grantResults.length > 0 && grantResults[0] == -1 && Manifest.permission.BLUETOOTH_CONNECT.equals(permissions[0])) {
             this.callbackContext.error("Bluetooth permission denied");
         } else {
-            startScanner();
+            this.barcodeScanner.startScanningBarcode();
         }
-    }
-
-    /**
-     * Start to receiver barcode events
-     */
-    private void startScanner() {
-        this.barcodeScanner.startScanningBarcode();
     }
 
     /**
@@ -102,10 +107,15 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
                 response.put("barcode", value);
                 this.pluginResult = new PluginResult(PluginResult.Status.OK, response);
                 this.pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(this.pluginResult);
+                this.callbackContext.sendPluginResult(this.pluginResult);
             } catch (Exception ex) {
-                callbackContext.error(ex.getMessage());
+                this.callbackContext.error(ex.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onScannerStarted() {
+        this.callbackContext.success();
     }
 }

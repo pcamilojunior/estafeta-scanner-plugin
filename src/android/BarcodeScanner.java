@@ -18,15 +18,15 @@ import java.util.Set;
 
 public class BarcodeScanner {
 
-    private String SCANNER_INIT = "unitech.scanservice.init";
-    private String SCAN2KEY_SETTING = "unitech.scanservice.scan2key_setting";
-    private String START_SCANSERVICE = "unitech.scanservice.start";
-    private String CLOSE_SCANSERVICE = "unitech.scanservice.close";
-    private String SOFTWARE_SCANKEY = "unitech.scanservice.software_scankey";
+    private final String SCANNER_INIT     = "unitech.scanservice.init";
+    private final String SCAN2KEY_SETTING = "unitech.scanservice.scan2key_setting";
+    private final String START_SCANSERVICE = "unitech.scanservice.start";
+    private final String CLOSE_SCANSERVICE = "unitech.scanservice.close";
+    private final String SOFTWARE_SCANKEY  = "unitech.scanservice.software_scankey";
     private static CallbackListener callbackListener;
-    private Context context;
-    private BarcodeReceiver mScanReceiver = new BarcodeReceiver();
-    static String ACTION_RECEIVE_DATA = "unitech.scanservice.data";
+    private final  Context          context;
+    private final  BarcodeReceiver  mScanReceiver       = new BarcodeReceiver();
+    static        String          ACTION_RECEIVE_DATA = "unitech.scanservice.data";
 
     public BarcodeScanner(Context context, CallbackListener listener) {
         this.context = context;
@@ -35,15 +35,14 @@ public class BarcodeScanner {
 
     public void startScanningBarcode() {
         if (this.devicesConnected()) {
-            callScanner();
+            startScanner();
         } else {
             Toast.makeText(context, "No devices connected!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void callScanner() {
+    private void startScanner() {
         Log.v("BarcodeScanner", "callScanner()");
-        registerScannerReceiver();
         startScanService();
         setScan2Key();
         setInit();
@@ -53,6 +52,8 @@ public class BarcodeScanner {
         bundle.putBoolean("scan", true);
         Intent mIntent = new Intent().setAction(SOFTWARE_SCANKEY).putExtras(bundle);
         context.sendBroadcast(mIntent);
+
+        callbackListener.onScannerStarted();
     }
 
     private void setScan2Key() {
@@ -103,7 +104,7 @@ public class BarcodeScanner {
         }
     }
 
-    public void registerScannerReceiver() {
+    void registerScannerReceiver() {
         Log.v("BarcodeScanner", "registerScannerReceiver()");
 
         IntentFilter intentFilter = new IntentFilter();
@@ -159,5 +160,10 @@ public class BarcodeScanner {
          * @param value the String result
          */
         void onSuccessRead(String value);
+
+        /**
+         * Notify that the scanner is started
+         */
+        void onScannerStarted();
     }
 }
