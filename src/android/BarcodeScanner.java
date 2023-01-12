@@ -27,6 +27,7 @@ public class BarcodeScanner {
     private final  Context          context;
     private final  BarcodeReceiver  mScanReceiver       = new BarcodeReceiver();
     static        String          ACTION_RECEIVE_DATA = "unitech.scanservice.data";
+    static boolean isScannerActive = false;
 
     public BarcodeScanner(Context context, CallbackListener listener) {
         this.context = context;
@@ -52,6 +53,7 @@ public class BarcodeScanner {
         bundle.putBoolean("scan", true);
         Intent mIntent = new Intent().setAction(SOFTWARE_SCANKEY).putExtras(bundle);
         context.sendBroadcast(mIntent);
+        isScannerActive = true;
 
         callbackListener.onScannerStarted();
     }
@@ -88,6 +90,7 @@ public class BarcodeScanner {
      */
     void closeScanService() {
         //to close scan service
+        isScannerActive = false;
         Bundle bundle = new Bundle();
         bundle.putBoolean("close", true);
         Intent mIntent = new Intent().setAction(CLOSE_SCANSERVICE).putExtras(bundle);
@@ -120,7 +123,7 @@ public class BarcodeScanner {
             String action = intent.getAction();
             Bundle bundle = intent.getExtras();
 
-            if (ACTION_RECEIVE_DATA.equals(action)) {
+            if (ACTION_RECEIVE_DATA.equals(action) && isScannerActive) {
                 String barcodeStr = bundle.getString("text");
                 callbackListener.onSuccessRead(barcodeStr);
             }

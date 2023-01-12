@@ -4,7 +4,7 @@ exports.startScanner = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback,  'EstafetaScannerPlugin', 'startScanner');
 };
 
-exports.stopScanner = function(successCallback, errorCallback) {
+exports.scannerListener = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback,  'EstafetaScannerPlugin', 'scannerListener');
 };
 
