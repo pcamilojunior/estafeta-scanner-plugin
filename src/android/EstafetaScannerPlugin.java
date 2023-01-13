@@ -16,6 +16,7 @@ import org.json.JSONObject;
 public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScanner.CallbackListener {
 
     private CallbackContext callbackContext;
+    private CallbackContext callbackScannerListener;
     private BarcodeScanner barcodeScanner;
     private String ACTION_START_SCANNER = "startScanner";
     private String ACTION_STOP_SCANNER = "stopScanner";
@@ -42,6 +43,7 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
                     this.stopScanner();
                 }
                 if (ACTION_SCANNER_LISTENER.equals(action)) {
+                    this.callbackScannerListener = callbackContext;
                     this.scannerListener();
                 }
             } catch (Exception ex) {
@@ -107,9 +109,9 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
                 response.put("barcode", value);
                 this.pluginResult = new PluginResult(PluginResult.Status.OK, response);
                 this.pluginResult.setKeepCallback(true);
-                this.callbackContext.sendPluginResult(this.pluginResult);
+                this.callbackScannerListener.sendPluginResult(this.pluginResult);
             } catch (Exception ex) {
-                this.callbackContext.error(ex.getMessage());
+                this.callbackScannerListener.error(ex.getMessage());
             }
         });
     }
