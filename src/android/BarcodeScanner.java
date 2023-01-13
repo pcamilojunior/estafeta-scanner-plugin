@@ -44,6 +44,7 @@ public class BarcodeScanner {
 
     private void startScanner() {
         Log.v("BarcodeScanner", "callScanner()");
+        registerScannerReceiver();
         startScanService();
         setScan2Key();
         setInit();
