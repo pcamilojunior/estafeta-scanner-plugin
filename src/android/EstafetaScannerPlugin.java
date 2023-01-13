@@ -1,15 +1,11 @@
 package com.estafeta.scanner.plugin;
 
-import android.Manifest;
-import android.os.Build;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -37,7 +33,7 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
         if (action != null) {
             try {
                 if (ACTION_START_SCANNER.equals(action)) {
-                    this.checkBluetoothConnectivity();
+                    this.barcodeScanner.startScanner();
                 }
                 if (ACTION_STOP_SCANNER.equals(action)) {
                     this.stopScanner();
@@ -60,27 +56,6 @@ public class EstafetaScannerPlugin extends CordovaPlugin implements BarcodeScann
 
     private void scannerListener() {
         this.barcodeScanner.registerScannerReceiver();
-    }
-
-    private void checkBluetoothConnectivity() {
-        if (!this.cordova.hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                this.cordova.requestPermissions(this, BLUETOOTH_RESULT, new String[] { Manifest.permission.BLUETOOTH_CONNECT });
-            } else {
-                this.barcodeScanner.startScanningBarcode();
-            }
-        } else {
-            this.barcodeScanner.startScanningBarcode();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
-        if (grantResults.length > 0 && grantResults[0] == -1 && Manifest.permission.BLUETOOTH_CONNECT.equals(permissions[0])) {
-            this.callbackContext.error("Bluetooth permission denied");
-        } else {
-            this.barcodeScanner.startScanningBarcode();
-        }
     }
 
     /**

@@ -24,11 +24,12 @@
             </feature>
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <!-- Permission bluetooth to get all devices near to know if some are connected or not -->
+       <!--  Permission bluetooth to get all devices near to know if some are connected or not -->
+       <!--   <config-file target="AndroidManifest.xml" parent="/manifest">
+                Commented because is no work on MABS 7.0 version
             <uses-permission android:name="android.permission.BLUETOOTH" />
             <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-        </config-file>
+        </config-file> -->
  
         <source-file src="src/android/BarcodeScanner.java" target-dir="src/com/estafeta/scanner/plugin" />
         <source-file src="src/android/EstafetaScannerPlugin.java" target-dir="src/com/estafeta/scanner/plugin" />

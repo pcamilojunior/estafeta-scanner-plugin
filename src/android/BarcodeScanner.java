@@ -1,20 +1,11 @@
 package com.estafeta.scanner.plugin;
 
-import static android.content.Context.BLUETOOTH_SERVICE;
-
-import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.lang.reflect.Method;
-import java.util.Set;
 
 public class BarcodeScanner {
 
@@ -34,15 +25,7 @@ public class BarcodeScanner {
         callbackListener = listener;
     }
 
-    public void startScanningBarcode() {
-        if (this.devicesConnected()) {
-            startScanner();
-        } else {
-            Toast.makeText(context, "No devices connected!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void startScanner() {
+    void startScanner() {
         Log.v("BarcodeScanner", "callScanner()");
         registerScannerReceiver();
         startScanService();
@@ -128,32 +111,6 @@ public class BarcodeScanner {
                 String barcodeStr = bundle.getString("text");
                 callbackListener.onSuccessRead(barcodeStr);
             }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    boolean devicesConnected() {
-        BluetoothManager btManager = (BluetoothManager) context.getSystemService(BLUETOOTH_SERVICE);
-        Set<BluetoothDevice> pairedDevices = btManager.getAdapter().getBondedDevices();
-        if (pairedDevices.isEmpty()) return false;
-
-        for (BluetoothDevice device : pairedDevices) {
-            if (isDeviceConnected(device)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    boolean isDeviceConnected(BluetoothDevice device) {
-        // invoke: boolean isConnected(BluetoothDevice device);
-        try {
-            Method m = device.getClass().getMethod("isConnected", (Class[]) null);
-            boolean connected = (boolean) m.invoke(device, (Object[]) null);
-            return connected;
-        } catch(Exception ex) {
-            Log.e("BarcodeScanner",  ex.getMessage());
-            return false;
         }
     }
 
